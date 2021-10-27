@@ -25,6 +25,8 @@ var options = {
 app.use(bodyParser.json()); //application/json
 
 app.use((req, res, next) => {
+    console.log("from here");
+    console.log(req.body)
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -40,12 +42,15 @@ app.use('/violation', violationRoutes);
 app.use('/violationLog', violationLogRoutes);
 
 app.use('/vehicle', vehicleRoutes);
+//'mongodb://localhost/andriod-project'
 
-mongoose.connect('mongodb://localhost/andriod-project', options, async(err, res)=> {
+const port = process.env.PORT || "8080";
+
+mongoose.connect('mongodb://ashraf:Jr2oEN1NCp8rXqqr@cluster0-shard-00-00.gbogk.mongodb.net:27017,cluster0-shard-00-01.gbogk.mongodb.net:27017,cluster0-shard-00-02.gbogk.mongodb.net:27017/cluster0?ssl=true&replicaSet=atlas-ukc6ze-shard-0&authSource=admin&retryWrites=true&w=majority', options, async(err, res)=> {
     if(err){
         throw err;
     }else{
         console.log('connected')
-        app.listen(8080);
+        app.listen(port);
     }
 });

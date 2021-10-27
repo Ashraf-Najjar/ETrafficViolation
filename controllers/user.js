@@ -1,14 +1,21 @@
 const VehiclesLog = require('../models/vehiclesLog');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 exports.signup = async (req, res, next) => {
+  console.log("Here we are");
+  console.log(req.body);
   const driver = req.body.driver;
-  const plugedNumber = req.body.plugedNumber;
+  let plugedNumber;
+  if(req.body.plugedNumber && typeof(req.body.plugedNumber) == "string"){
+    plugedNumber = +req.body.plugedNumber;
+  }else{
+    plugedNumber = req.body.plugedNumber;
+  }
+
   const type = req.body.type;
   const category = req.body.category;
-  const productionDate = req.body.productionDate;
-  const registrationDate = req.body.registrationDate;
+  const productionDate = new Date(req.body.productionDate);
+  const registrationDate = new Date(req.body.registrationDate);
   //const hash = await bcrypt.hash(plugedNumber.toString(), 10);
   // if(hash){
       const vehiclesLog = new VehiclesLog({
@@ -26,7 +33,6 @@ exports.signup = async (req, res, next) => {
               result: result
           })
       }).catch(err => {
-        console.log(err)
         res.status(500).json({
           message: "Invalid authentication credentials!"
         });
@@ -37,10 +43,11 @@ exports.signup = async (req, res, next) => {
 // Super Admin 60001
 exports.login = (req, res, next) => {
   let plugedNumber = req.body.plugedNumber;
-  console.log("request send")
+  console.log("header");
+  console.log(req.headers)
+  console.log("here we are")
   console.log(req.body)
   if(typeof(plugedNumber)== "string"){
-    console.log("here we are , we should transfer it");
     plugedNumber = parseInt(plugedNumber);
   }
   VehiclesLog.findOne({ driver: new RegExp(req.body.driver, 'i'), plugedNumber: plugedNumber })
@@ -50,11 +57,10 @@ exports.login = (req, res, next) => {
           message: "Auth failed"
         });
       }
-      console.log(vehicle)
       const token = jwt.sign(
         { plugedNumber: vehicle.plugedNumber, vehicleId: vehicle._id, role: vehicle.role ? vehicle.role : 'user' },
         "secret_this_should_be_longer",
-        { expiresIn: "1h" }
+        { expiresIn: "2h" }
       );
       res.status(200).json({
         token: token,
@@ -72,12 +78,12 @@ exports.login = (req, res, next) => {
       });
     })
     .catch(err => {
-      console.log(err)
       return res.status(401).json({
-        message: "Invalid authentication credentials!"
+        message: "Invalid authentication credentials!",
       });
     });
 }
+
 // Log in with encrypt check
 // exports.login = (req, res, next) => {
 //   let fetchedVehicle;

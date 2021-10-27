@@ -28,7 +28,7 @@ const vehiclesLogSchema = new Schema({
         type: Date,
         required: true
     },
-    IsCrossOut:{
+    isCrossOut:{
         type: Boolean,
         default: false
     },

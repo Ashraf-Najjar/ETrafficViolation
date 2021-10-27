@@ -3,6 +3,8 @@ const Violation = require('../models/violation');
 //import mongoose from 'mongoose';
 
 exports.getViolations = (req, res, next) => {
+  console.log("here we are")
+  console.log(req.userData)
     if(req.userData.role != "Admin"){
       return res.status(401).json({
         message: 'You dont hava permission to do this operation',
@@ -10,13 +12,13 @@ exports.getViolations = (req, res, next) => {
     }
     const skip = +req.query.skip;
     const limit = +req.query.limit;
-    console.log(skip, '  ', limit)
     Violation.find().skip(skip * limit).limit(limit)
     .then(violations => {
         fetchedViolations = violations;
         return Violation.count();
       })
       .then(count => {
+        console.log(fetchedViolations)
         res.status(200).json({
           message: "Violations fetched successfully!",
           violations: fetchedViolations,

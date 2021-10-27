@@ -5,7 +5,6 @@ const Post = require('../models/post');
 exports.getPosts = (req, res, next) => {
     const skip = +req.query.skip;
     const limit = +req.query.limit;
-    console.log(skip, '  ', limit)
     Post.find().skip(skip * limit).limit(limit)
     .then(documents => {
         fetchedPosts = documents;
@@ -23,7 +22,6 @@ exports.getPosts = (req, res, next) => {
 
 exports.getPostById = (req, res, next) => {
     Post.findById(req.params.id).then(post => {
-        console.log("sss")
         if(post){
             res.status(200).json(post);
         } else{
@@ -42,7 +40,6 @@ exports.updatePost = (req, res, next) => {
         title: title,
         content: content
     }).then(result => {
-        console.log(result)
         if (result.matchedCount > 0) {
             res.status(200).json({ message: "Update successful!" });
           } else {
@@ -53,7 +50,6 @@ exports.updatePost = (req, res, next) => {
 
 exports.createPost = (req, res, next) => {
     const errors = validationResult(req);
-    console.log(req)
     if(!errors.isEmpty()){
         return res.status(422).json({message: 'Validation failed', errors: errors.array()})
     }
@@ -66,7 +62,6 @@ exports.createPost = (req, res, next) => {
         imageUrl: 'images/test.jpg'
     });
     post.save().then(result => {
-        console.log(result);
         res.status(201).json({
             message: 'Post created successfully!',
             post: result
